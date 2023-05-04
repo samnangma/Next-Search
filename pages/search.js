@@ -1,31 +1,36 @@
-import { useState } from 'react';
+import { useState , useEffect } from 'react';
 import Layout from '../components/layout'
 import DataTable from 'react-data-table-component';
 
-export default function Search() {
+export default function Search({products}) {
     const [product, setproduct] = useState([])
-    fetch('https://fakestoreapi.com/products/')
-    .then(res => res.json())
-    .then(data => setproduct(data))
+
+    useEffect(() => {
+        setproduct(products)
+    },[])
 
     const columns = [
         {
             name: "Title",
             title: "title",
-            selector: row => row.title
+            selector: row => row.title,
+            sortable: true
         }, {
             name: "Price",
             price: "price",
-            selector: row => row.price
+            selector: row => row.price,
+            sortable: true
         }, {
             name: "Description",
             description: "description",
-            selector: row => row.description
+            selector: row => row.description,
+            sortable: true
         },
         {
             name: "Images",
             images: "images",
-            selector: row => <img src={row.image} width={100} height={120} />
+            selector: row => <img src={row.image} width={100} height={120} />,
+            sortable: true
         },
         {   
             name: "Action",
@@ -49,6 +54,7 @@ export default function Search() {
                     </button>
                 </>
             ),
+            sortable: true,
         },
     ]
 
@@ -86,6 +92,16 @@ export default function Search() {
 
         </Layout>
     )
+}
+
+export async function getServerSideProps(){
+    const res = await fetch('https://fakestoreapi.com/products/')
+    const resp = await res.json()
+    return{
+        props:{
+            products: resp
+        }
+    }
 }
 
 
